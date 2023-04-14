@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  backend:
+    build:
+      context: ./Arneg-Server/
+      dockerfile: Dockerfile
+    ports:
+      - "7022:80"
+      - "7021:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    depends_on:
+      - db
+      
+  frontend:
+    build:
+      context: ./ClientApp/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+      
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydatabase
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - "15432:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+  pgadmin-data:

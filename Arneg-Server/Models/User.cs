@@ -8,6 +8,7 @@ namespace Arneg_Server.Models
         public string Login { get; set; } = string.Empty;
         public byte[] PasswordHash { get; set; } = default!;
         public byte[] PasswordSalt { get; set; } = default!;
+        public string? Role { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
     }

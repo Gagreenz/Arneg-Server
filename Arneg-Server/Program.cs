@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Arneg_Server.Services.Middlewares;
 using Arneg_Server.Services.ReviewService.Interfaces;
 using Arneg_Server.Services.ReviewService;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Arneg_Server
 {
@@ -51,7 +53,7 @@ namespace Arneg_Server
                     Description = "bearer {token}",
                     In = ParameterLocation.Header,
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.ApiKey,
                 });
 
                 options.OperationFilter<SecurityRequirementsOperationFilter>();
@@ -69,18 +71,19 @@ namespace Arneg_Server
                        .AllowAnyHeader()
                        .AllowAnyMethod()
                        .AllowCredentials());
+            //Removed development check
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            app.UseHttpsRedirection();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseStaticFiles();
             app.MapControllers();
             app.UseMiddleware<JwtUserIdMiddleware>();
+
+            app.MapGet("/", () => "hello world");
+
             app.Run();
         }
     }
